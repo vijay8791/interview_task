@@ -35,37 +35,46 @@ clean-targets:         # directories to be removed by `dbt clean`
 # continue to be built as views. These settings can be overridden in the individual model files
 # using the `{{ config(...) }}` macro.
 
-models:
-  dbt_interview:
-    +database: SALESFORCE        # ← your Snowflake database name
-    +persist_docs:
-      relation: true
-      columns: true
-
-    staging:
-      +schema: SALESFORCE            # ← reads from raw source schema
-      +materialized: view
-
-    intermediate:
-      +materialized: table
-      +schema: INTERMEDIATE          # ← dbt creates SALESFORCE_RAW.INTERMEDIATE
-
-    marts:
-      +materialized: table
-      +schema: MARTS                 # ← dbt creates SALESFORCE_RAW.MARTS
-
-seeds:
-  dbt_interview:
-    +database: SALESFORCE_RAW
-    +schema: SEEDS
-
-snapshots:
-  dbt_interview:
-    +database: SALESFORCE_RAW
-    +target_schema: SNAPSHOTS
-
 vars:
   "dbt_date:time_zone": "America/New_York"
   fiscal_year_start_month: 4
   min_date: '2018-01-01'
   max_date: '2030-12-31'
+ 
+models:
+  dbt_interview:
+    +database: SALESFORCE
+    +persist_docs:
+      relation: true
+      columns: true
+ 
+    staging:
+      +materialized: view
+      +schema: SALESFORCE
+      +tags: ['staging']
+ 
+    intermediate:
+      +materialized: table
+      +schema: INTERMEDIATE
+      +tags: ['intermediate']
+ 
+    marts:
+      +materialized: table
+      +schema: MARTS
+      +tags: ['marts']
+      dimensions:
+        +tags: ['marts', 'dimensions']
+      facts:
+        +tags: ['marts', 'facts', 'daily']
+ 
+seeds:
+  dbt_interview:
+    +database: SALESFORCE_RAW
+    +schema: SEEDS
+    +tags: ['seeds']
+ 
+snapshots:
+  dbt_interview:
+    +database: SALESFORCE_RAW
+    +target_schema: SNAPSHOTS
+    +tags: ['snapshots']
