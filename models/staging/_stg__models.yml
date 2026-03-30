@@ -1,0 +1,146 @@
+version: 2
+
+models:
+  - name: stg_salesforce__account
+    description: Staged account records — column rename only.
+    columns:
+      - name: account_id
+        description: Primary key.
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_salesforce__campaign
+    description: Staged campaign records.
+    columns:
+      - name: campaign_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_salesforce__case
+    description: Staged case records.
+    columns:
+      - name: case_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_salesforce__case_history_2
+    description: Staged case history records.
+    columns:
+      - name: case_history_id
+        tests:
+          - unique
+          - not_null
+      - name: caseid
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_salesforce__case')
+                field: case_id
+
+  - name: stg_salesforce__contact
+    description: Staged contact records.
+    columns:
+      - name: contact_id
+        tests:
+          - unique
+          - not_null
+      - name: accountid
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_salesforce__account')
+                field: account_id
+
+  - name: stg_salesforce__lead
+    description: Staged lead records.
+    columns:
+      - name: lead_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_salesforce__opportunity
+    description: Staged opportunity records.
+    columns:
+      - name: opportunity_id
+        tests:
+          - unique
+          - not_null
+      - name: accountid
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_salesforce__account')
+                field: account_id
+
+  - name: stg_salesforce__opportunity_history
+    description: Staged opportunity history records.
+    columns:
+      - name: opportunity_history_id
+        tests:
+          - unique
+          - not_null
+      - name: opportunityid
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_salesforce__opportunity')
+                field: opportunity_id
+
+  - name: stg_salesforce__pricebook_entry
+    description: Staged pricebook entry records.
+    columns:
+      - name: pricebook_entry_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_salesforce__product_2
+    description: Staged product records.
+    columns:
+      - name: product_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_salesforce__record_type
+    description: Staged record type records.
+    columns:
+      - name: record_type_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_salesforce__solution
+    description: Staged solution records.
+    columns:
+      - name: solution_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_salesforce__user
+    description: Staged user records.
+    columns:
+      - name: user_id
+        tests:
+          - unique
+          - not_null
+      - name: username
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_salesforce__user_role
+    description: Staged user role records.
+    columns:
+      - name: user_role_id
+        tests:
+          - unique
+          - not_null

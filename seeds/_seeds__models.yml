@@ -1,0 +1,33 @@
+version: 2
+
+seeds:
+  - name: seed_lead_status_map
+    description: Static lookup mapping Salesforce lead statuses to display labels.
+    columns:
+      - name: lead_status
+        tests:
+          - unique
+          - not_null
+      - name: status_label
+        tests:
+          - not_null
+      - name: sort_order
+        tests:
+          - not_null
+
+  - name: seed_opportunity_stage_map
+    description: Static lookup mapping opportunity stage names to pipeline phases.
+    columns:
+      - name: stage_name
+        tests:
+          - unique
+          - not_null
+      - name: pipeline_phase
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Early', 'Mid', 'Late', 'Closed']
+      - name: sort_order
+        tests:
+          - not_null

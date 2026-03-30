@@ -1,0 +1,122 @@
+version: 2
+
+models:
+  - name: fct_opportunity
+    description: >
+      Opportunity fact table. Incremental model keyed on opportunity_id.
+      Includes window metrics — rank by amount, running won amount per quarter.
+    tests:
+      - unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - opportunity_id
+              - fiscal_year
+              - fiscal_quarter
+    columns:
+      - name: opportunity_sk
+        description: "{{ doc('account_sk') }}"
+        tests:
+          - unique
+          - not_null
+      - name: opportunity_id
+        tests:
+          - unique
+          - not_null
+      - name: account_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_account')
+                field: account_id
+      - name: opportunity_outcome
+        description: "{{ doc('opportunity_outcome') }}"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Won', 'Lost', 'Open']
+      - name: days_to_close
+        description: "{{ doc('days_to_close') }}"
+      - name: is_closed
+        tests:
+          - not_null
+      - name: is_won
+        tests:
+          - not_null
+      - name: dbt_loaded_at
+        description: "{{ doc('dbt_loaded_at') }}"
+        tests:
+          - not_null
+
+  - name: fct_case
+    description: >
+      Case fact table. Includes SLA tracking, resolution timing,
+      and window metrics per account.
+    tests:
+      - unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - case_id
+              - case_number
+    columns:
+      - name: case_sk
+        tests:
+          - unique
+          - not_null
+      - name: case_id
+        tests:
+          - unique
+          - not_null
+      - name: case_number
+        tests:
+          - unique
+          - not_null
+      - name: case_status
+        tests:
+          - not_null
+      - name: is_sla_violation
+        description: "{{ doc('is_sla_violation') }}"
+      - name: is_closed
+        tests:
+          - not_null
+      - name: dbt_loaded_at
+        description: "{{ doc('dbt_loaded_at') }}"
+        tests:
+          - not_null
+
+  - name: fct_lead
+    description: >
+      Lead fact table. Includes lifecycle stage, days to convert,
+      and owner-level conversion rate.
+    tests:
+      - unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - lead_id
+              - lead_lifecycle_stage
+    columns:
+      - name: lead_sk
+        tests:
+          - unique
+          - not_null
+      - name: lead_id
+        tests:
+          - unique
+          - not_null
+      - name: lead_lifecycle_stage
+        description: "{{ doc('lead_lifecycle_stage') }}"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Converted', 'Deleted', 'Active']
+      - name: days_to_convert
+        description: "{{ doc('days_to_convert') }}"
+      - name: is_converted
+        tests:
+          - not_null
+      - name: dbt_loaded_at
+        description: "{{ doc('dbt_loaded_at') }}"
+        tests:
+          - not_null
